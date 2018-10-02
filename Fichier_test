@@ -1,0 +1,225 @@
+----------------------Ceci est le fichier test de notre rendu---------------------------
+
+
+Test #1 :
+
+2+3;;    Rendu machine : 5
+
+Test #2 :
+
+let a = 2 in a;;    Rendu machine : 2
+
+Test #3 :
+
+let a = 3 in let b = 5 in a*b;;     Rendu machine : 15
+
+Test #4 :
+
+let y = (0 > 2) in y;;     Rendu machine : Erreur. Ceci est un message normal de la part de notre interpreteur, en effet les booléens sont limités aux if then else, comme demandé dans le sujet.
+
+Test #5 :
+
+let a = 2 in a*b;;      Rendu machine : Exception. C'est normal, b n'est pas défini dans notre environnement.
+
+Test #6 :
+
+let f x y = fun z -> x*(y-z) in f 4;;	Rendu machine : y->(fun z -> (4*(y-z))) = <fun>
+
+Test #7 :
+
+fun y z -> let a = 8 in y*(z-a);;	Rendu machine : y->(fun z -> let a = 8 in (y*(z-a))) = <fun>
+On remarque ici qu'il reste le let a = 8 in, alors qu'il serait préférable qu'il soit effacé et a remplacé dans l'expression. Nous n'avons pas réussi à le faire marcher ainsi.
+
+Test #8 :
+
+let f x = if x = 3 then 5 else 3 in f 3;;	Rendu machine : 5 
+
+Tets #9 :
+
+let a = 5 in let f x = x*a in f 9;;	Rendu machine : 45
+
+Test #10 :
+
+if 8 = 5 then 3;;	Rendu machine : 0
+Comme expliqué dans le readme, notre if _ then renvoie 0 si la condition n'est pas respectée
+
+Test #11 :
+
+let f = fun y -> fun z x -> x+y+z in let g x y z = f x y z in g 1 2 3;;		Rendu machine : 6
+
+Test #12 :
+
+let f x = prInt (3+x) in f (8-5);;	Rendu machine : 6 \n 6
+
+Test #13 :
+
+prInt(8-4)+prInt(3*7);;		Rendu machine : 4 \n 21 \n 25
+
+Test #14 :
+
+let f x = let y = 8 in x*y in y;;	Rendu machine : Erreur
+C'est le comportement attendu : la variable est locale
+
+Test #15 :
+
+let f x = x + 5 in let g h = 2*h in (g f) 5;;	Rendu machine : Erreur
+Comme indiqué dans le ReadMe, nos programmes ne prennent en entrée que des entiers et pas des programmes.
+
+Test #16 : Fonction factorielle
+
+let rec fact n = if n = 1 then 1 else n*(fact(n-1)) in fact 5;;   Rendu machine : 120 
+
+Test #17 :
+
+let rec fact n = if n = 1 then 1 else n*(fact n-1) in fact 5;; Rendu machine : Erreur.
+En effet, l'execution en ./fouine -debug de cette même fonction renvoi : let rec fact (fun n -> if n = 1 then 1 else n*((fact n)-1)) in fact 5;; Soit, un tournage infini. cette exception étant traité comme une erreur, le programme ne peut pas tourner. Ceci viens du manque de renseignement de parenthèse dans l'expression. Ces erreurs seraient aussi apparus en Caml. 
+
+Test #18 : Fibonacci rec
+
+let rec fibo n = if n = 1 then 1  else if n = 0 then 1 else fibo (n-1) + fibo (n-2) in fibo 4;; Rendu machine : 5 (1 1 2 3 5)
+
+Test #19 : Fonction d'ackerman
+
+let rec ack m n =    
+	if m = 0 then n+1 else
+	if n = 0 then ack (m-1) 1 else ack (m-1) (ack m (n-1)) in ack 2 2;; Rendu machine : 7
+
+Test #20 :
+
+Il s'agit ici de tester quelque limites de notre interpreteur. En effet, nous avons rentré des valeurs seuils pour la fonction d'ackerman précédemment définie. 
+Les valeurs que notre programme calcule en un temps raisonnable sont bornées par l'entrée : m = 4 n = 1 (rendu 65533) et m = 3 n = 10 (rendu 16381 en + de 2 minutes)
+Afin d'avoir un ordre d'idée des valeurs : https://fr.wikipedia.org/wiki/Fonction_d'Ackermann (tableau de fin de page)
+
+
+----------Les tests #21 à #25 sont effectués avec l'option -interm-------------------------
+
+Test #21 :
+
+5 + 3 - 2 * 4 + prInt 13 ;;
+
+Rendu machine : [C 13; P; C 4; C 2; M; C 3; C 5; A; S; A]
+
+Test #22 : 
+
+prInt 5 + prInt 11 - prInt 2 * prInt 3 ;;
+
+Rendu machine : [C 3; P; C 2; P; M; C 11; P; C 5; P; A; S]
+
+Test #23 :
+
+1+2-3*4-5+6*7;;
+
+Rendu machine : [C 7; C 6; M; C 5; C 4; C 3; M; C 2; C 1; A; S; S; A]
+
+Test #24 :
+
+if 3 = 8 then 5 else 9 ;;
+
+Rendu machine : "Erreur : utilisation de l'option -interm sur une expression non arithmétique"
+C'est normal, la machine à pile ne traite que les expressions arithmétiques "simples".
+
+Test #25 :
+
+3 + 4 5 ;;
+
+Rendu machine : "Erreur : syntaxe invalide"
+Cette expression a une mauvaise syntaxe, et l'erreur est donc repérée dès le parsing.
+
+----------Les tests #26 à #30 sont effectués avec l'option -machine---------------------------
+
+Test #26 :
+
+5 + 9 - 2 * 4 + prInt 13 ;;
+
+Rendu machine : 13 \n 19
+
+Test #27 :
+
+prInt 5 + prInt 11 - prInt 2 * prInt 3 ;;
+
+Rendu machine : 3 \n 2 \n 11 \n 5 \n 10
+On voit que les prInt sont exécutés dans le bon ordre.
+
+Test #28 :
+
+1+2-3*4+5-6*7 ;;
+
+Rendu machine : -46
+C'est le bon résultat, même sur des nombres négatifs.
+
+Test #29 :
+
+if 3 = 8 then 5 else 9 ;;
+
+Rendu machine : "Erreur : utilisation de l'option -machine sur une expression non arithmétique"
+C'est normal comme pour le #24
+
+Test #30 : 
+
+3 + 4 5 ;;
+
+Rendu machine : "Erreur : syntaxe invalide"
+Comme pour le #25, l'erreur de syntaxe est bien repérée.
+
+
+Test #31 :
+
+./fouine -interm
+
+Rendu machine : "Erreur : indiquez l'emplacement de sauvegarde pour le résultat"
+
+Test #32 :
+
+./fouine -haha
+
+Rendu machine : "Erreur : option non disponible. Usage : ./fouine ou avec options -debug, -machine ou -interm file_location."
+
+Test #33 :
+
+try try raise (E 17)+2 with E x -> x+1 with E y -> 3;;
+
+Rendu machine : 18 ce qui correspond bien au premier calcul possible a effectuer a partir de la donnée de l'exception.
+
+Test #34 :
+
+let x = 32 in (x*(let x = 52 in x));;
+
+Rendu machine : 1664(32*52)
+
+Test #35 :
+
+(let x = 52 in 32*x)
+
+Rendu machine : 1664
+
+Test #36 :
+
+let r = ref 17 in !r;;
+
+Rendu machine : 17
+
+Test #37 :
+
+let r = ref 17 in try raise (E 17) + (!r) with E x -> x+1;;
+
+Rendu machine : 18
+
+Test #38 :
+
+let r = ref 17 in try raise (E 17) + !r with E x -> x+1;;
+
+Rendu machine : Erreur d'écriture. En effet, le + et le ! ne sont pas distingués ici. d'ou les parenthèses présentes dans le test précédents.
+
+Test #39 :
+
+let r = ref 17 in r:= (!r)+8;;
+
+Rendu machine : 25
+
+Test #40 :
+
+./fouine toto.ml output.txt
+
+Rendu machine : lis le fichier toto.ml a l'aide du parser, et ecrit le resultat dans output.txt
+
+
